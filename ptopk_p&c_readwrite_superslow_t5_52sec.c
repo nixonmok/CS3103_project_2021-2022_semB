@@ -15,10 +15,10 @@ current status:
 multithread in single file reading -> performance dropped greatly
 multithread on multiple file reading -> perfrormance dropped
 multithread heapify (divide in to theadnum works) -> implementing
-producer-consumer model -> multithread, 一個thread 讀file (唔做parse)(producer), 另外幾個就負責consume(parse and count) -> failed? or my code is shit?
+producer-consumer model -> multithread, 一個thread 讀file (唔做parse)(producer), 另外幾個就負責consume(parse and count) -> failed?
 memory map multithread file reading -> DOING!!!!!
 */
-#define howManyBuffer 4000
+#define howManyBuffer 104857
 #define bufferSize 40
 struct pair time_with_count;  // pair<int,int> in c++
 long start_time = 1645491600; // 2022年2月22日Tuesday 01:00:00
@@ -267,10 +267,10 @@ int main(int argc, char **argv) //**argv = console command, e.g (./file.c 1 2)
     clock_t finishReading = clock();
  
     //printf("escape from multithread\n");
-    //用heap sort 出 top k
+    
     int k = atoi(argv[3]);
 
-    TopK(timeWithCountArr, k, number_of_hours); //用pair,轉咗位搵得返個timestamp
+    TopK(timeWithCountArr, k, number_of_hours); 
 
     puts("Top K frequently accessed hour:");
 

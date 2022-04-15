@@ -98,7 +98,7 @@ void TopK(struct pair *a, int k, int n)
 }
 
 // multithread reading
-struct thread_arg //呢個係parameter黎 = =, for thread calling 佢真係乜都唔教...
+struct thread_arg 
 {
     FILE *input_file;
     int start;
@@ -183,8 +183,7 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
 
     int input_is_file = isFile(argv[1]); // read console command ./test.o "case5/"<-this 1645491600 5
 
-    int number_of_hours = ((end_time / 3600 * 3600) - start_time) / 3600; //由start time 去到 end time有幾多個hours
-    //答案係9320個,所以counter_array最多會係9320 * pair struct byte (兩個int = 8 byte) 咁大 唔知會唔會leak
+    int number_of_hours = ((end_time / 3600 * 3600) - start_time) / 3600; 
 
     struct pair *timeWithCountArr = calloc(number_of_hours, sizeof(struct pair)); // use calloc to initialize untouch element to 0
 
@@ -204,36 +203,36 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
             return 1;
         }
 
-        while ((in_file = readdir(FD)) != NULL) //總之係讀directory
+        while ((in_file = readdir(FD)) != NULL) 
         {
 
-            if (!strcmp(in_file->d_name, ".")) // directory第一個file係"dir/.""
+            if (!strcmp(in_file->d_name, ".")) 
                 continue;
-            if (!strcmp(in_file->d_name, "..")) // directory第二個file係"dir/.."
-                continue;                       //所以continue skip咗佢(冇用)
+            if (!strcmp(in_file->d_name, "..")) 
+                continue;                       
             strcpy(target_file, argv[1]);
-            strcat(target_file, in_file->d_name); // 組合兩個 string, argv[1] = "case5/", in_file -> d_name = "input名"
+            strcat(target_file, in_file->d_name); 
 
-            int thread_num = 2;                                // thread數目
-            long file_len = get_file_length(target_file);      //攞file size
-            long size_for_each_thread = file_len / thread_num; //除以thread數目, 開4個thread
+            int thread_num = 2;                                
+            long file_len = get_file_length(target_file);      
+            long size_for_each_thread = file_len / thread_num; 
 
-            ThreadArg arg_list[thread_num]; //每個thread 嘅資訊(係一個struct黎)
-            pthread_t readers[thread_num];  //開4個thread
+            ThreadArg arg_list[thread_num]; 
+            pthread_t readers[thread_num]; 
 
             int start_posi = 0;
 
-            //儲存thread嘅資訊
+            
             for (int i = 0; i < thread_num - 1; i++)
-            { // run 頭三個thread,因爲file size通常都唔會整除到4,所以最後一個thread要獨立寫
+            { 
                 arg_list[i].input_file = fopen(target_file, "r");
                 arg_list[i].start = start_posi;
-                //第i個thread嘅start = i-1th thread嘅end (i=0: pos = 0)
+                
 
                 start_posi += size_for_each_thread;
 
-                arg_list[i].end = start_posi;                  //下一個thread嘅start position就係上一個thread嘅結束位
-                arg_list[i].timeWithCountArr = timeWithCountArr; //重點野
+                arg_list[i].end = start_posi;                  
+                arg_list[i].timeWithCountArr = timeWithCountArr; 
             }
 
             arg_list[thread_num-1].input_file = fopen(target_file, "r");
@@ -247,29 +246,29 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
             for (int i = 0; i < thread_num; i++)
             {
                 pthread_create(&readers[i], NULL, ReadChunk, &arg_list[i]);
-                //開4個pthread, 行ReadChunk呢個function
+                
             }
             for (int i = 0; i < thread_num; i++)
             {
                 pthread_join(readers[i], NULL);
-                //開始run
+                
             }
 
             for (int i = 0; i < thread_num; i++)
             {
                 fclose(arg_list[i].input_file);
-                // ReadChunk會fopen, 所以呢到close返
+                
             }           
         }
 
 
 
-        //讀完所有file, 開始topk algorithm
+        
         int max = 0;
         int maximum_hour;
-        //用heap sort 出 top k
+        
         int k = atoi(argv[3]);
-        TopK(timeWithCountArr, k, number_of_hours); //用pair,轉咗位搵得返個timestamp
+        TopK(timeWithCountArr, k, number_of_hours); 
 
         for (int i = number_of_hours - 1; i > number_of_hours - k - 1; i--)
         {

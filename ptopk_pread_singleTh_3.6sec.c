@@ -17,8 +17,9 @@ multithread on multiple file reading -> perfrormance dropped
 multithread heapify (divide in to theadnum works) -> implementing
 producer-consumer model -> multithread, 一個thread 讀file (唔做parse)(producer), 另外幾個就負責consume(parse and count).
 */
-#define MAX_READBUF 41943040 // 40MB
+#define MAX_READBUF 40000000 // change if you want
 #define MIN(a, b) ((b) > (a) ? (a): (b))
+char filebuf[1000000];
 
 struct pair
 {
@@ -38,7 +39,6 @@ struct pair time_with_count;  // pair<int,int> in c++
 long start_time = 1645491600; // 2022年2月22日Tuesday 01:00:00
 long end_time = 1679046032;
 struct pair *timeWithCountArr = NULL;
-char filebuf[1000000];
 
 
 void showTopk(struct pair *timeWithCountArr, int k, int number_of_hours)
@@ -156,13 +156,9 @@ void read_file(FILE *fp)
 
             for (; *f != '\n'; --f) {
                 /* nothing */
-            }
-
-            *f = '0';
+            }    
             needread = f - buf;
         }
-
-        buf[readsize] = 0;
 
         while (p - buf < needread) {
             int time_stamp = atoi(p);
@@ -213,7 +209,7 @@ void finaltopk(int k, int nproc, int *endidxs)
     int size = k * sizeof(struct pair);
     struct pair *finalpair = malloc(nproc * size);
     int last = endidxs[0];
-
+    
     // copy top k sorted part from every part
     for (int idx = 0; idx < nproc; ++idx) {
         void *src = &timeWithCountArr[last] - k;

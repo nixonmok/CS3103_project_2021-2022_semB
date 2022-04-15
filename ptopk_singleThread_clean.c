@@ -72,12 +72,12 @@ void heapify(struct pair *a, int size, int node_idx)
     }
 
     if (left_idx < size && a[check].count == a[left_idx].count && a[check].hours < a[left_idx].hours)
-    { // left child bigger than current(also index < size)
+    { // left child's hour bigger than current(also index < size)
         check = left_idx;
     }
 
     if (right_idx < size && a[check].count == a[right_idx].count && a[check].hours < a[right_idx].hours)
-    { // right child bigger than current
+    { // right child's hour bigger than current
         check = right_idx;
     }
 
@@ -106,10 +106,7 @@ void TopK(struct pair *a, int k, int n)
         a[i] = temp;
 
         heapify(a, i, 0);
-        // heap sort k times -> n - k - 1
-        // it is correct because from the main(), the "cout" loop is loop from backward,
-        // so I just need to do heap sort for K time(for heap sort, the largest element will
-        // move to last position everytime.
+
     }
 }
 
@@ -196,7 +193,7 @@ int main(int argc, char **argv) //**argv = console command, e.g (./file.c 1 2)
     //用heap sort 出 top k
     int k = atoi(argv[3]);
 
-    TopK(timeWithCountArr, k, number_of_hours); //用pair,轉咗位搵得返個timestamp
+    TopK(timeWithCountArr, k, number_of_hours); 
 
     puts("Top K frequently accessed hour:");
     for (int i = number_of_hours - 1; i > number_of_hours - k - 1; i--)

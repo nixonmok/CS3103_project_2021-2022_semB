@@ -18,7 +18,7 @@ multithread on multiple file reading -> perfrormance dropped
 multithread heapify (divide in to theadnum works) -> implementing
 producer-consumer model -> multithread, 一個thread 讀file (唔做parse)(producer), 另外幾個就負責consume(parse and count).
 */
-#define MAX_READBUF 10485760 // 10MB
+#define MAX_READBUF 40000000 // change if you want
 #define MIN(a, b) ((b) > (a) ? (a): (b))
 
 struct pair

@@ -136,16 +136,16 @@ void *ReadMultipleFileSameTime(void *arg)
     while (argStuff->start + finished <= argStuff->end && (inputFile = readdir(folder)) != NULL)
     {
         ReadCount++;
-        if (!strcmp(inputFile->d_name, ".")) // directory第一個file係"dir/.""
+        if (!strcmp(inputFile->d_name, ".")) 
         {   printf("handled .\n");
             continue;}
-        if (!strcmp(inputFile->d_name, "..")) // directory第二個file係"dir/.."
+        if (!strcmp(inputFile->d_name, "..")) 
            {printf("handled ..\n") ;continue;}
         
         strcpy(fileName, argStuff->folderName);
-        strcat(fileName, inputFile->d_name); // 組合兩個 string, argv[1] = "case5/", in_file -> d_name = "input名"
+        strcat(fileName, inputFile->d_name);
 
-        reading = fopen(fileName, "r"); //開file
+        reading = fopen(fileName, "r"); 
 
         while (fgets(buffer, buffer_size, reading) != NULL)
         {
@@ -174,7 +174,7 @@ long get_file_length(const char *file_name)
     return sb.st_size;
 }
 
-int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./file.c 1 2) 呢啲
+int main(int argc, char **argv) 
 {
     int threadNo = 10; // change the plan, use multithread to read multiple file at the same time
     clock_t start;
@@ -186,16 +186,16 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
     forCountNumberOfFolder = opendir(argv[1]);
     while ((countfiles = readdir(forCountNumberOfFolder)) != NULL)
     {
-        if (!strcmp(countfiles->d_name, ".")) // directory第一個file係"dir/.""
+        if (!strcmp(countfiles->d_name, ".")) 
             continue;
-        if (!strcmp(countfiles->d_name, "..")) // directory第二個file係"dir/.."
+        if (!strcmp(countfiles->d_name, "..")) 
             continue;
         numberOfFileInFolder++;
     }
     closedir(forCountNumberOfFolder);
 
     int number_of_hours = ((end_time / 3600 * 3600) - start_time) / 3600;
-    struct pair *timeWithCountArr = calloc(number_of_hours, sizeof(struct pair)); // dynamic array, 屌佢老母乜9都唔教
+    struct pair *timeWithCountArr = calloc(number_of_hours, sizeof(struct pair)); // dynamic array
 
     if (numberOfFileInFolder < threadNo) // file < 4, single thread
     {
@@ -203,8 +203,7 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
         struct dirent *in_file;
         FILE *common_file; // read file in folder
         char target_file[255];
-        //由start time 去到 end time有幾多個hours
-        //答案係9320個,所以counter_array最多會係9320 * int byte 咁大 唔知會唔會leak
+        
         int input_is_file = isFile(argv[1]); // read console command ./test.o "case5/"<-this 1645491600 5
         int buffer_size = 40;
         char buffer[buffer_size + 1];
@@ -224,16 +223,16 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
                 return 1;
             }
 
-            while ((in_file = readdir(FD)) != NULL) //總之係讀directory
+            while ((in_file = readdir(FD)) != NULL) 
             {
-                if (!strcmp(in_file->d_name, ".")) // directory第一個file係"dir/.""
+                if (!strcmp(in_file->d_name, "."))  
                     continue;
-                if (!strcmp(in_file->d_name, "..")) // directory第二個file係"dir/.."
-                    continue;                       //所以continue skip咗佢(冇用)
+                if (!strcmp(in_file->d_name, "..")) 
+                    continue;                       
                 strcpy(target_file, argv[1]);
-                strcat(target_file, in_file->d_name); // 組合兩個 string, argv[1] = "case5/", in_file -> d_name = "input名"
+                strcat(target_file, in_file->d_name); 
 
-                common_file = fopen(target_file, "r"); //開file
+                common_file = fopen(target_file, "r"); 
 
                 if (common_file == NULL)
                 {
@@ -245,21 +244,21 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
                 int line = 0;
                 int counter = 0;
 
-                //呢個係single thread read and parse搬過黎,諗下點multithread
+                
                 while (fgets(buffer, buffer_size, common_file) != NULL)
-                { // parse嘅內容
+                { 
                     char *temp;
-                    long time_stamp = strtol(buffer, &temp, 10); //將char*,姐係buffer由頭開始讀,讀到唔係數字爲止, return long int base n, temp 會變做指去第一個唔係數字嘅位
+                    long time_stamp = strtol(buffer, &temp, 10); 
                     int transformedHour = (time_stamp - start_time) / 3600;
 
                     timeWithCountArr[transformedHour].hours = transformedHour;
                     timeWithCountArr[transformedHour].count += 1;
-                    //&temp 停咗係個逗號到,未寫讀佢嘅code
+                    
 
                     counter++;
                 }
 
-                // body結束
+               
 
                 fclose(common_file);
             }
@@ -276,10 +275,8 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
 
         int input_is_file = isFile(argv[1]); // read console command ./test.o "case5/"<-this 1645491600 5
 
-        int number_of_hours = ((end_time / 3600 * 3600) - start_time) / 3600; //由start time 去到 end time有幾多個hours
-        //答案係9320個,所以counter_array最多會係9320 * pair struct byte (兩個int = 8 byte) 咁大 唔知會唔會leak
-
-
+        int number_of_hours = ((end_time / 3600 * 3600) - start_time) / 3600; 
+        
         if (input_is_file == 1)
         {
             // printf("it's a file\n");
@@ -316,32 +313,28 @@ int main(int argc, char **argv) //**argv 應該係讀console command,姐係(./fi
             for (int i = 0; i < threadNo; i++)
             {
                 pthread_create(&reader[i], NULL, ReadMultipleFileSameTime, &argumentList[i]);
-                //開4個pthread, 行ReadChunk呢個function
+               
             }
             for (int i = 0; i < threadNo; i++)
             {
                 pthread_join(reader[i], NULL);
-                //開始run
+                
             }
 
             printf("Read Count: %d\n", ReadCount);
 
-            // for (int i = 0; i < threadNo; i++)
-            // {
-            //     closedir(argumentList[i].directory);
-            //     //  ReadChunk會fopen, 所以呢到close返
-            // }
+        
         }
     }
 
 
-    //讀完所有file, 開始topk algorithm
+    
     int max = 0;
     int maximum_hour;
-    //用heap sort 出 top k
+    
     int k = atoi(argv[3]);
 
-    TopK(timeWithCountArr, k, number_of_hours); //用pair,轉咗位搵得返個timestamp
+    TopK(timeWithCountArr, k, number_of_hours); 
 
     for (int i = number_of_hours - 1; i > number_of_hours - k - 1; i--)
     {
